@@ -4,22 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of users.
-     */
     public function index()
     {
         return response()->json(User::all(), 200);
     }
 
-    /**
-     * Store a newly created user in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -43,17 +39,11 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
-    /**
-     * Display the specified user.
-     */
     public function show(User $user)
     {
         return response()->json($user, 200);
     }
 
-    /**
-     * Update the specified user in storage.
-     */
     public function update(Request $request, User $user)
     {
         $request->validate([
@@ -76,14 +66,50 @@ class UserController extends Controller
         return response()->json($user, 200);
     }
 
-
-    /**
-     * Remove the specified user from storage.
-     */
     public function destroy(User $user)
     {
         $user->delete();
 
         return response()->json(['message' => 'User deleted successfully'], 200);
     }
+
+    public function login(Request $request)
+    {
+        try {
+            // Validate incoming request
+            $request->validate([
+                'username' => 'required|string',
+                'password' => 'required|string',
+            ]);
+
+            // Attempt to find the user by username
+            $user = User::where('username', $request->username)->first();
+
+            // Check if the user exists and if the password matches
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                throw ValidationException::withMessages([
+                    'username' => ['The provided credentials are incorrect.'],
+                ]);
+            }
+
+            // If login is successful, create a new token
+            $token = $user->createToken('API Token')->plainTextToken;
+
+            // Return the response as an array of objects
+            return response()->json([
+                [
+                    'user' => $user,
+                    'token' => $token,
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            // Log the exception and return a generic error message
+            \Log::error('Login Error: ' . $e->getMessage());
+
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+    }
+
+
 }
