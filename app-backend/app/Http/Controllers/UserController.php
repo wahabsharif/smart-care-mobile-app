@@ -57,25 +57,25 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'first_name' => 'sometimes|string|max:255',
-            'last_name' => 'sometimes|string|max:255',
-            'username' => 'sometimes|string|max:255|unique:users,username,' . $user->id,
-            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+            'first_name' => 'string|max:255',
+            'last_name' => 'string|max:255',
+            'username' => 'string|max:255|unique:users,username,' . $user->id,
+            'email' => 'string|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:15',
-            'password' => 'sometimes|string|min:8',
+            'password' => 'nullable|string|min:8', // Password is now nullable
         ]);
 
-        $user->update($request->only([
-            'first_name',
-            'last_name',
-            'username',
-            'email',
-            'phone',
-            'password' => $request->password ? Hash::make($request->password) : $user->password,
-        ]));
+        // Only hash the password if it's provided
+        if ($request->has('password')) {
+            $request->merge(['password' => Hash::make($request->password)]);
+        }
+
+        // Update the user with validated data
+        $user->update($request->only(['first_name', 'last_name', 'username', 'email', 'phone', 'password']));
 
         return response()->json($user, 200);
     }
+
 
     /**
      * Remove the specified user from storage.
