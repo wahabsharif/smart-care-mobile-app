@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export default function Home() {
+export default function Groups() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Chats Screen</Text>
+      <Text style={styles.text}>Group Chats Screen</Text>
     </View>
   );
 }

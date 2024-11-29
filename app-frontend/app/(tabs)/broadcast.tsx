@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export default function Home() {
+export default function Broadcast() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Chats Screen</Text>
+      <Text style={styles.text}>Broadcast Chats Screen</Text>
     </View>
   );
 }
