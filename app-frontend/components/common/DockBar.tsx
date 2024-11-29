@@ -1,9 +1,13 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { Platform } from "react-native";
+
+// Components
 import { HapticTab } from "@/components/HapticTab";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+
+// Icons
 import { Ionicons } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -18,18 +22,18 @@ export default function DockBar() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarLabelStyle: {
-          fontSize: 10,
+          fontSize: 15,
           marginTop: 2,
         },
         tabBarIconStyle: {
-          marginBottom: -5,
+          marginBottom: 1,
         },
         tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: "absolute",
+          default: {
+            backgroundColor: Colors[colorScheme ?? "light"].background,
+            height: 60, // Default height
+            paddingBottom: 10, // Default padding
           },
-          default: {},
         }),
       }}
     >
